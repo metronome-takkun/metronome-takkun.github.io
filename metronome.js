@@ -1,8 +1,4 @@
-// metronome.js
-// Depends on i18n.js (window.I18n)
-
 (function(){
-  // Elements
   const langSel = document.getElementById('lang');
   const bpmInput = document.getElementById('bpm');
   const startBtn = document.getElementById('start');
@@ -13,23 +9,20 @@
   const volRange = document.getElementById('volume');
   const dot = document.getElementById('dot');
 
-  // Initialize i18n select
   I18n.init(langSel);
 
-  // Audio context and scheduling
   let audioCtx = null;
   let isRunning = false;
   let currentNote = 0;
   let tempo = 120;
-  let lookahead = 25.0; // ms
-  let scheduleAheadTime = 0.1; // seconds
+  let lookahead = 25.0; 
+  let scheduleAheadTime = 0.1; 
   let nextNoteTime = 0.0;
   let timerID = null;
   let beatsPerBar = 4;
   let subdivision = 1;
   let gainNode = null;
 
-  // Tap tempo
   let tapTimes = [];
 
   function initAudio() {
@@ -64,8 +57,7 @@
   function scheduleNote(beatNumber, time) {
     const totalSubdivision = beatsPerBar * subdivision;
     const beatIndex = beatNumber % totalSubdivision;
-    const isAccent = (beatIndex % (subdivision) === 0); // downbeat of each beat
-    // accent the first beat of bar
+    const isAccent = (beatIndex % (subdivision) === 0); 
     const isBarAccent = (beatIndex === 0);
     playClick(time, isBarAccent);
     const now = audioCtx.currentTime;
@@ -110,7 +102,6 @@
     }, 120);
   }
 
-  // Event listeners
   startBtn.addEventListener('click', () => {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     start();
@@ -134,7 +125,6 @@
     subdivision = parseInt(subSel.value, 10);
   });
 
-  // Tap tempo logic
   tapBtn.addEventListener('click', () => {
     const now = performance.now();
     tapTimes.push(now);
@@ -151,7 +141,6 @@
     tapBtn._clearTimer = setTimeout(()=>tapTimes=[], 2000);
   });
 
-  // Keyboard shortcuts
   window.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
       e.preventDefault();
@@ -161,13 +150,11 @@
     }
   });
 
-  // Accessibility focus styles
   document.querySelectorAll('button,input,select').forEach(el=>{
     el.addEventListener('focus', ()=>el.style.outline='2px solid rgba(6,182,212,0.18)');
     el.addEventListener('blur', ()=>el.style.outline='none');
   });
 
-  // Clean up on page hide
   window.addEventListener('pagehide', () => {
     if (audioCtx) audioCtx.close();
   });
