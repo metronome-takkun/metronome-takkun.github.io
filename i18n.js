@@ -3,6 +3,9 @@
     "en": {
       title: "Metronome",
       langLabel: "Language",
+      themeLabel: "Theme",
+      dark: "Dark",
+      light: "Light",
       bpmLabel: "BPM",
       beatsLabel: "Beats / Bar",
       subLabel: "Subdivision",
@@ -16,6 +19,9 @@
     "ja": {
       title: "メトロノーム",
       langLabel: "言語",
+      themeLabel: "テーマ",
+      dark: "ダーク",
+      light: "ライト",
       bpmLabel: "BPM",
       beatsLabel: "小節の拍数",
       subLabel: "分割",
@@ -29,6 +35,9 @@
     "zh-Hans": {
       title: "节拍器",
       langLabel: "语言",
+      themeLabel: "主题",
+      dark: "深色",
+      light: "浅色",
       bpmLabel: "BPM",
       beatsLabel: "小节拍数",
       subLabel: "细分",
@@ -42,6 +51,9 @@
     "zh-Hant": {
       title: "節拍器",
       langLabel: "語言",
+      themeLabel: "主題",
+      dark: "深色",
+      light: "淺色",
       bpmLabel: "BPM",
       beatsLabel: "小節拍數",
       subLabel: "細分",
@@ -55,6 +67,9 @@
     "ko": {
       title: "메트로놈",
       langLabel: "언어",
+      themeLabel: "테마",
+      dark: "다크",
+      light: "라이트",
       bpmLabel: "BPM",
       beatsLabel: "마디 박자",
       subLabel: "세분화",
@@ -68,6 +83,9 @@
     "es": {
       title: "Metrónomo",
       langLabel: "Idioma",
+      themeLabel: "Tema",
+      dark: "Oscuro",
+      light: "Claro",
       bpmLabel: "BPM",
       beatsLabel: "Compases",
       subLabel: "Subdivisión",
@@ -81,6 +99,9 @@
     "fr": {
       title: "Métronome",
       langLabel: "Langue",
+      themeLabel: "Thème",
+      dark: "Sombre",
+      light: "Clair",
       bpmLabel: "BPM",
       beatsLabel: "Temps / Mesure",
       subLabel: "Subdivision",
@@ -94,6 +115,9 @@
     "de": {
       title: "Metronom",
       langLabel: "Sprache",
+      themeLabel: "Design",
+      dark: "Dunkel",
+      light: "Hell",
       bpmLabel: "BPM",
       beatsLabel: "Schläge / Takt",
       subLabel: "Unterteilung",
@@ -107,6 +131,9 @@
     "pt-BR": {
       title: "Metrônomo",
       langLabel: "Idioma",
+      themeLabel: "Tema",
+      dark: "Escuro",
+      light: "Claro",
       bpmLabel: "BPM",
       beatsLabel: "Batidas / Compasso",
       subLabel: "Subdivisão",
@@ -120,6 +147,9 @@
     "ru": {
       title: "Метроном",
       langLabel: "Язык",
+      themeLabel: "Тема",
+      dark: "Тёмная",
+      light: "Светлая",
       bpmLabel: "BPM",
       beatsLabel: "Доли / Такт",
       subLabel: "Деление",
@@ -133,6 +163,9 @@
     "it": {
       title: "Metronomo",
       langLabel: "Lingua",
+      themeLabel: "Tema",
+      dark: "Scuro",
+      light: "Chiaro",
       bpmLabel: "BPM",
       beatsLabel: "Battiti / Battuta",
       subLabel: "Suddivisione",
@@ -146,6 +179,9 @@
     "nl": {
       title: "Metronoom",
       langLabel: "Taal",
+      themeLabel: "Thema",
+      dark: "Donker",
+      light: "Licht",
       bpmLabel: "BPM",
       beatsLabel: "Slagen / Maat",
       subLabel: "Subdivisie",
@@ -185,14 +221,14 @@
 
   function init(selectEl) {
     if (!selectEl) return;
+    const labelMap = {
+      "en":"English","ja":"日本語","zh-Hans":"简体中文","zh-Hant":"繁體中文","ko":"한국어",
+      "es":"Español","fr":"Français","de":"Deutsch","pt-BR":"Português (BR)","ru":"Русский",
+      "it":"Italiano","nl":"Nederlands"
+    };
     available.forEach(code => {
       const opt = document.createElement('option');
       opt.value = code;
-      const labelMap = {
-        "en":"English","ja":"日本語","zh-Hans":"简体中文","zh-Hant":"繁體中文","ko":"한국어",
-        "es":"Español","fr":"Français","de":"Deutsch","pt-BR":"Português (BR)","ru":"Русский",
-        "it":"Italiano","nl":"Nederlands"
-      };
       opt.textContent = labelMap[code] || code;
       selectEl.appendChild(opt);
     });
