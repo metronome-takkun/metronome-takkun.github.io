@@ -1,3 +1,4 @@
+// metronome.js
 (function(){
   const langSel = document.getElementById('lang');
   const themeSel = document.getElementById('theme');
@@ -10,52 +11,93 @@
   const volRange = document.getElementById('volume');
   const dot = document.getElementById('dot');
 
-
+  // Initialize i18n select
   I18n.init(langSel);
 
-
+  /* Theme handling with Auto */
   const THEME_KEY = 'metronome_theme';
+  function getSavedTheme(){ try { return localStorage.getItem(THEME_KEY); } catch(e){ return null; } }
+  function saveTheme(t){ try { localStorage.setItem(THEME_KEY, t); } catch(e){} }
 
-  function getSavedTheme(){
-    try { return localStorage.getItem(THEME_KEY); } catch(e){ return null; }
+  const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+  function systemTheme() {
+    if (!mq) return 'light';
+    return mq.matches ? 'dark' : 'light';
   }
 
-  function saveTheme(t){
-    try { localStorage.setItem(THEME_KEY, t); } catch(e){}
-  }
-
-  function applyTheme(theme){
-    if(theme === 'light'){
+  function applyTheme(theme) {
+    if (theme === 'light') {
       document.documentElement.classList.add('light-theme');
       document.documentElement.setAttribute('data-theme','light');
     } else {
       document.documentElement.classList.remove('light-theme');
       document.documentElement.setAttribute('data-theme','dark');
     }
-    if(themeSel) themeSel.value = theme;
-    saveTheme(theme);
+    if (themeSel && themeSel.value !== 'auto') themeSel.value = theme;
   }
 
-  function initThemeSelect(){
+  function applyThemeChoice(choice) {
+    if (choice === 'auto') {
+      applyTheme(systemTheme());
+    } else {
+      applyTheme(choice);
+    }
+    if (themeSel) themeSel.value = choice;
+    saveTheme(choice);
+  }
+
+  function initThemeUI() {
     const dict = I18n.translations[langSel.value] || I18n.translations['en'];
-    themeSel.querySelector('option[value="dark"]').textContent = dict.dark;
-    themeSel.querySelector('option[value="light"]').textContent = dict.light;
+    if (themeSel) {
+      const optAuto = themeSel.querySelector('option[value="auto"]');
+      const optDark = themeSel.querySelector('option[value="dark"]');
+      const optLight = themeSel.querySelector('option[value="light"]');
+      if (optAuto) optAuto.textContent = dict.auto || optAuto.textContent;
+      if (optDark) optDark.textContent = dict.dark || optDark.textContent;
+      if (optLight) optLight.textContent = dict.light || optLight.textContent;
+    }
   }
 
+  initThemeUI();
   const savedTheme = getSavedTheme();
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+  const initialThemeChoice = savedTheme || 'auto';
+  applyThemeChoice(initialThemeChoice);
 
-  initThemeSelect();
-  applyTheme(initialTheme);
+  if (mq && typeof mq.addEventListener === 'function') {
+    mq.addEventListener('change', () => {
+      const currentChoice = themeSel ? themeSel.value : (getSavedTheme() || 'auto');
+      if (currentChoice === 'auto') applyTheme(systemTheme());
+    });
+  } else if (mq && typeof mq.addListener === 'function') {
+    mq.addListener(() => {
+      const currentChoice = themeSel ? themeSel.value : (getSavedTheme() || 'auto');
+      if (currentChoice === 'auto') applyTheme(systemTheme());
+    });
+  }
 
-  themeSel.addEventListener('change', e => applyTheme(e.target.value));
+  if (themeSel) {
+    themeSel.addEventListener('change', (e) => {
+      applyThemeChoice(e.target.value);
+    });
+  }
 
   langSel.addEventListener('change', () => {
-    initThemeSelect();
-    applyTheme(themeSel.value);
+    initThemeUI();
+    const currentChoice = themeSel ? themeSel.value : (getSavedTheme() || 'auto');
+    applyThemeChoice(currentChoice);
   });
 
+  /* Language auto behavior handled in i18n.js; re-apply when system language changes */
+  if ('onlanguagechange' in window) {
+    window.addEventListener('languagechange', () => {
+      if (langSel && langSel.value === 'auto') {
+        I18n.apply('auto');
+      }
+    });
+  }
+
+  /* Audio + Scheduler */
   let audioCtx = null;
   let isRunning = false;
   let currentNote = 0;
@@ -103,9 +145,7 @@
     const totalSubdivision = beatsPerBar * subdivision;
     const beatIndex = beatNumber % totalSubdivision;
     const isBarAccent = (beatIndex === 0);
-
     playClick(time, isBarAccent);
-
     const now = audioCtx.currentTime;
     const delay = Math.max(0, (time - now) * 1000);
     setTimeout(() => flash(isBarAccent), delay);
@@ -148,6 +188,7 @@
     }, 120);
   }
 
+  /* Event listeners */
   startBtn.addEventListener('click', () => {
     if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     start();
