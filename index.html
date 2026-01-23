@@ -10,9 +10,20 @@
   <div class="wrap" role="application" aria-label="Metronome">
     <div class="top-row">
       <h1 data-i18n="title">Metronome</h1>
-      <div class="lang-select">
-        <label for="lang" class="visually-hidden" data-i18n="langLabel">Language</label>
-        <select id="lang" aria-label="Language selector"></select>
+
+      <div class="controls-inline" style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <div class="lang-select">
+          <label for="lang" class="visually-hidden" data-i18n="langLabel">Language</label>
+          <select id="lang" aria-label="Language selector"></select>
+        </div>
+
+        <div class="theme-select">
+          <label for="theme" class="visually-hidden" data-i18n="themeLabel">Theme</label>
+          <select id="theme" aria-label="Theme selector">
+            <option value="dark" data-i18n="dark">Dark</option>
+            <option value="light" data-i18n="light">Light</option>
+          </select>
+        </div>
       </div>
     </div>
 
