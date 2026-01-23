@@ -1,5 +1,6 @@
 (function(){
   const langSel = document.getElementById('lang');
+  const themeSel = document.getElementById('theme');
   const bpmInput = document.getElementById('bpm');
   const startBtn = document.getElementById('start');
   const stopBtn = document.getElementById('stop');
@@ -11,11 +12,55 @@
 
   I18n.init(langSel);
 
+  const THEME_KEY = 'metronome_theme';
+  function getSavedTheme() {
+    try { return localStorage.getItem(THEME_KEY); } catch(e){ return null; }
+  }
+  function saveTheme(t) {
+    try { localStorage.setItem(THEME_KEY, t); } catch(e){}
+  }
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light-theme');
+    } else {
+      document.documentElement.classList.remove('light-theme');
+    }
+
+    if (themeSel) themeSel.value = theme;
+    saveTheme(theme);
+  }
+  
+  function initThemeSelect() {
+    const dict = I18n && I18n.translations ? I18n.translations[langSel.value || 'en'] : null;
+    if (dict) {
+      const optDark = themeSel.querySelector('option[value="dark"]');
+      const optLight = themeSel.querySelector('option[value="light"]');
+      if (optDark) optDark.textContent = dict.dark || optDark.textContent;
+      if (optLight) optLight.textContent = dict.light || optLight.textContent;
+    }
+  }
+
+  const savedTheme = getSavedTheme();
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+  if (themeSel) {
+    initThemeSelect();
+    applyTheme(initialTheme);
+    themeSel.addEventListener('change', (e) => applyTheme(e.target.value));
+  } else {
+    applyTheme(initialTheme);
+  }
+
+  langSel.addEventListener('change', () => {
+    initThemeSelect();
+    applyTheme(themeSel ? themeSel.value : initialTheme);
+  });
+
   let audioCtx = null;
   let isRunning = false;
   let currentNote = 0;
   let tempo = 120;
-  let lookahead = 25.0; 
+  let lookahead = 25.0;
   let scheduleAheadTime = 0.1; 
   let nextNoteTime = 0.0;
   let timerID = null;
@@ -57,7 +102,6 @@
   function scheduleNote(beatNumber, time) {
     const totalSubdivision = beatsPerBar * subdivision;
     const beatIndex = beatNumber % totalSubdivision;
-    const isAccent = (beatIndex % (subdivision) === 0); 
     const isBarAccent = (beatIndex === 0);
     playClick(time, isBarAccent);
     const now = audioCtx.currentTime;
