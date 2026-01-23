@@ -1,9 +1,14 @@
+// i18n.js
 (function(){
   const translations = {
+    "auto": {
+      auto: "Auto"
+    },
     "en": {
       title: "Metronome",
       langLabel: "Language",
       themeLabel: "Theme",
+      auto: "Auto (System)",
       dark: "Dark",
       light: "Light",
       bpmLabel: "BPM",
@@ -20,6 +25,7 @@
       title: "メトロノーム",
       langLabel: "言語",
       themeLabel: "テーマ",
+      auto: "自動（システムに合わせる）",
       dark: "ダーク",
       light: "ライト",
       bpmLabel: "BPM",
@@ -36,6 +42,7 @@
       title: "节拍器",
       langLabel: "语言",
       themeLabel: "主题",
+      auto: "自动（跟随系统）",
       dark: "深色",
       light: "浅色",
       bpmLabel: "BPM",
@@ -52,6 +59,7 @@
       title: "節拍器",
       langLabel: "語言",
       themeLabel: "主題",
+      auto: "自動（跟隨系統）",
       dark: "深色",
       light: "淺色",
       bpmLabel: "BPM",
@@ -68,6 +76,7 @@
       title: "메트로놈",
       langLabel: "언어",
       themeLabel: "테마",
+      auto: "자동（시스템）",
       dark: "다크",
       light: "라이트",
       bpmLabel: "BPM",
@@ -84,6 +93,7 @@
       title: "Metrónomo",
       langLabel: "Idioma",
       themeLabel: "Tema",
+      auto: "Auto (Sistema)",
       dark: "Oscuro",
       light: "Claro",
       bpmLabel: "BPM",
@@ -100,6 +110,7 @@
       title: "Métronome",
       langLabel: "Langue",
       themeLabel: "Thème",
+      auto: "Auto (Système)",
       dark: "Sombre",
       light: "Clair",
       bpmLabel: "BPM",
@@ -116,6 +127,7 @@
       title: "Metronom",
       langLabel: "Sprache",
       themeLabel: "Design",
+      auto: "Automatisch (System)",
       dark: "Dunkel",
       light: "Hell",
       bpmLabel: "BPM",
@@ -132,6 +144,7 @@
       title: "Metrônomo",
       langLabel: "Idioma",
       themeLabel: "Tema",
+      auto: "Auto (Sistema)",
       dark: "Escuro",
       light: "Claro",
       bpmLabel: "BPM",
@@ -148,6 +161,7 @@
       title: "Метроном",
       langLabel: "Язык",
       themeLabel: "Тема",
+      auto: "Авто (Система)",
       dark: "Тёмная",
       light: "Светлая",
       bpmLabel: "BPM",
@@ -164,6 +178,7 @@
       title: "Metronomo",
       langLabel: "Lingua",
       themeLabel: "Tema",
+      auto: "Auto (Sistema)",
       dark: "Scuro",
       light: "Chiaro",
       bpmLabel: "BPM",
@@ -180,6 +195,7 @@
       title: "Metronoom",
       langLabel: "Taal",
       themeLabel: "Thema",
+      auto: "Auto (Systeem)",
       dark: "Donker",
       light: "Licht",
       bpmLabel: "BPM",
@@ -195,7 +211,7 @@
   };
 
   const STORAGE_KEY = 'metronome_lang';
-  const available = Object.keys(translations);
+  const available = Object.keys(translations).filter(k => k !== 'auto');
 
   function getSaved() {
     try { return localStorage.getItem(STORAGE_KEY); } catch(e){ return null; }
@@ -204,8 +220,20 @@
     try { localStorage.setItem(STORAGE_KEY, lang); } catch(e){}
   }
 
+  function resolveFromNavigator() {
+    const nav = navigator.language || navigator.userLanguage || 'en';
+    if (nav.startsWith('zh-TW') || nav.startsWith('zh-HK') || nav.startsWith('zh-Hant')) return 'zh-Hant';
+    if (nav.startsWith('zh')) return 'zh-Hans';
+    if (nav.startsWith('pt-BR')) return 'pt-BR';
+    const base = nav.split('-')[0];
+    if (available.includes(nav)) return nav;
+    if (available.includes(base)) return base;
+    return 'en';
+  }
+
   function apply(lang) {
-    const dict = translations[lang] || translations['en'];
+    const effective = (lang === 'auto' || !lang) ? resolveFromNavigator() : lang;
+    const dict = translations[effective] || translations['en'];
     document.querySelectorAll('[data-i18n]').forEach(node => {
       const key = node.getAttribute('data-i18n');
       if (!key) return;
@@ -215,12 +243,19 @@
         node.textContent = dict[key] || node.textContent;
       }
     });
-    document.documentElement.lang = lang.startsWith('ja') ? 'ja' : (lang.startsWith('zh-Hant') ? 'zh-Hant' : (lang.startsWith('zh') ? 'zh-Hans' : lang));
+    const htmlLang = (effective === 'zh-Hant') ? 'zh-Hant' : (effective === 'zh-Hans' ? 'zh' : effective);
+    document.documentElement.lang = htmlLang;
     save(lang);
   }
 
   function init(selectEl) {
     if (!selectEl) return;
+    // Auto option
+    const optAuto = document.createElement('option');
+    optAuto.value = 'auto';
+    optAuto.textContent = translations['en'].auto || 'Auto';
+    selectEl.appendChild(optAuto);
+
     const labelMap = {
       "en":"English","ja":"日本語","zh-Hans":"简体中文","zh-Hant":"繁體中文","ko":"한국어",
       "es":"Español","fr":"Français","de":"Deutsch","pt-BR":"Português (BR)","ru":"Русский",
@@ -232,12 +267,24 @@
       opt.textContent = labelMap[code] || code;
       selectEl.appendChild(opt);
     });
+
     const saved = getSaved();
-    const nav = (navigator.language && navigator.language.startsWith('ja')) ? 'ja' : (navigator.language && navigator.language.startsWith('zh-TW') ? 'zh-Hant' : (navigator.language && navigator.language.startsWith('zh') ? 'zh-Hans' : (navigator.language ? navigator.language.split('-')[0] : 'en')));
-    const initial = saved || (available.includes(nav) ? nav : (available.includes('en') ? 'en' : available[0]));
+    const initial = saved || 'auto';
     selectEl.value = initial;
     apply(initial);
-    selectEl.addEventListener('change', (e) => apply(e.target.value));
+
+    selectEl.addEventListener('change', (e) => {
+      apply(e.target.value);
+      if (e.target.value === 'auto') {
+        apply('auto');
+      }
+    });
+
+    if ('onlanguagechange' in window) {
+      window.addEventListener('languagechange', () => {
+        if (selectEl.value === 'auto') apply('auto');
+      });
+    }
   }
 
   window.I18n = { init, apply, getAvailable: () => available.slice(), translations };
