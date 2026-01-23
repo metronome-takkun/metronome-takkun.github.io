@@ -1,7 +1,3 @@
-// i18n.js
-// Provides translations and language persistence via localStorage.
-// Exposes window.I18n with methods: init(selectElement), apply(lang), getAvailable()
-
 (function(){
   const translations = {
     "en": {
@@ -15,7 +11,7 @@
       stopBtn: "Stop",
       tapBtn: "Tap",
       tapHint: "Tap tempo: 4 taps to set BPM",
-      footer: "Made for GitHub Pages — works in modern browsers (Chrome/Edge/Firefox/Safari)"
+      footer: "works in modern browsers (Chrome/Edge/Firefox/Safari)"
     },
     "ja": {
       title: "メトロノーム",
@@ -28,7 +24,7 @@
       stopBtn: "停止",
       tapBtn: "タップ",
       tapHint: "タップテンポ：4回タップでBPMを設定",
-      footer: "GitHub Pages向け — 最新ブラウザで動作します（Chrome/Edge/Firefox/Safari）"
+      footer: "最新ブラウザで動作します（Chrome/Edge/Firefox/Safari）"
     },
     "zh-Hans": {
       title: "节拍器",
@@ -41,7 +37,7 @@
       stopBtn: "停止",
       tapBtn: "拍击",
       tapHint: "拍击节拍：拍击4次以设置BPM",
-      footer: "适用于 GitHub Pages — 在现代浏览器中可用（Chrome/Edge/Firefox/Safari）"
+      footer: "在现代浏览器中可用（Chrome/Edge/Firefox/Safari）"
     },
     "zh-Hant": {
       title: "節拍器",
@@ -54,7 +50,7 @@
       stopBtn: "停止",
       tapBtn: "拍擊",
       tapHint: "拍擊節拍：拍擊4次以設定BPM",
-      footer: "適用於 GitHub Pages — 在現代瀏覽器中可用（Chrome/Edge/Firefox/Safari）"
+      footer: "在現代瀏覽器中可用（Chrome/Edge/Firefox/Safari）"
     },
     "ko": {
       title: "메트로놈",
@@ -67,7 +63,7 @@
       stopBtn: "정지",
       tapBtn: "탭",
       tapHint: "탭 템포: 4회 탭하여 BPM 설정",
-      footer: "GitHub Pages용 — 최신 브라우저에서 작동합니다 (Chrome/Edge/Firefox/Safari)"
+      footer: "최신 브라우저에서 작동합니다 (Chrome/Edge/Firefox/Safari)"
     },
     "es": {
       title: "Metrónomo",
@@ -80,7 +76,7 @@
       stopBtn: "Detener",
       tapBtn: "Tap",
       tapHint: "Tap tempo: 4 toques para ajustar BPM",
-      footer: "Hecho para GitHub Pages — funciona en navegadores modernos (Chrome/Edge/Firefox/Safari)"
+      footer: "funciona en navegadores modernos (Chrome/Edge/Firefox/Safari)"
     },
     "fr": {
       title: "Métronome",
@@ -93,7 +89,7 @@
       stopBtn: "Arrêter",
       tapBtn: "Tap",
       tapHint: "Tap tempo : 4 taps pour définir le BPM",
-      footer: "Conçu pour GitHub Pages — fonctionne dans les navigateurs modernes (Chrome/Edge/Firefox/Safari)"
+      footer: "fonctionne dans les navigateurs modernes (Chrome/Edge/Firefox/Safari)"
     },
     "de": {
       title: "Metronom",
@@ -106,7 +102,7 @@
       stopBtn: "Stopp",
       tapBtn: "Tap",
       tapHint: "Tap-Tempo: 4 Taps zum Einstellen des BPM",
-      footer: "Für GitHub Pages — funktioniert in modernen Browsern (Chrome/Edge/Firefox/Safari)"
+      footer: "funktioniert in modernen Browsern (Chrome/Edge/Firefox/Safari)"
     },
     "pt-BR": {
       title: "Metrônomo",
@@ -119,7 +115,7 @@
       stopBtn: "Parar",
       tapBtn: "Tap",
       tapHint: "Tap tempo: 4 toques para definir o BPM",
-      footer: "Feito para GitHub Pages — funciona em navegadores modernos (Chrome/Edge/Firefox/Safari)"
+      footer: "funciona em navegadores modernos (Chrome/Edge/Firefox/Safari)"
     },
     "ru": {
       title: "Метроном",
@@ -132,7 +128,7 @@
       stopBtn: "Стоп",
       tapBtn: "Тап",
       tapHint: "Tap tempo: 4 нажатия для установки BPM",
-      footer: "Для GitHub Pages — работает в современных браузерах (Chrome/Edge/Firefox/Safari)"
+      footer: "работает в современных браузерах (Chrome/Edge/Firefox/Safari)"
     },
     "it": {
       title: "Metronomo",
@@ -145,7 +141,7 @@
       stopBtn: "Ferma",
       tapBtn: "Tap",
       tapHint: "Tap tempo: 4 tocchi per impostare il BPM",
-      footer: "Realizzato per GitHub Pages — funziona nei browser moderni (Chrome/Edge/Firefox/Safari)"
+      footer: "funziona nei browser moderni (Chrome/Edge/Firefox/Safari)"
     },
     "nl": {
       title: "Metronoom",
@@ -158,7 +154,7 @@
       stopBtn: "Stop",
       tapBtn: "Tap",
       tapHint: "Tap tempo: 4 taps om BPM in te stellen",
-      footer: "Gemaakt voor GitHub Pages — werkt in moderne browsers (Chrome/Edge/Firefox/Safari)"
+      footer: "werkt in moderne browsers (Chrome/Edge/Firefox/Safari)"
     }
   };
 
@@ -189,11 +185,9 @@
 
   function init(selectEl) {
     if (!selectEl) return;
-    // populate options in a stable order
     available.forEach(code => {
       const opt = document.createElement('option');
       opt.value = code;
-      // show native language name for clarity
       const labelMap = {
         "en":"English","ja":"日本語","zh-Hans":"简体中文","zh-Hant":"繁體中文","ko":"한국어",
         "es":"Español","fr":"Français","de":"Deutsch","pt-BR":"Português (BR)","ru":"Русский",
