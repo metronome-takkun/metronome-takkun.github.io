@@ -8,6 +8,7 @@
   --control-border: rgba(255,255,255,0.04);
 }
 
+/* Light Theme */
 .light-theme{
   --bg: #f6f8fb;
   --card: #ffffff;
@@ -72,12 +73,14 @@ h1{
   appearance:none;
 }
 
+/* Dark mode select */
 :root:not(.light-theme) select{
   background-color:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.12);
   color:var(--text);
 }
 
+/* Light mode select */
 .light-theme select{
   background-color:rgba(2,6,23,0.06);
   border:1px solid rgba(2,6,23,0.12);
@@ -187,6 +190,12 @@ footer{
   margin-top:16px;
   font-size:0.8rem;
   color:var(--muted);
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  border-color: var(--accent);
 }
 
 @media (max-width:420px){
